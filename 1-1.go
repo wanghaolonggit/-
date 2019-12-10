@@ -1,30 +1,52 @@
-/*
-该题描述：
+/****
+题目描述
+给定一个二维数组，其每一行从左到右递增排序，从上到下也是递增排序。给定一个数，判断这个数是否在该二维数组中。
 
-给定一个长度为n的整数数组nums，数组中所有的数字都在 0∼n−1的范围内。
+Consider the following matrix:
+[
+  [1,   4,  7, 11, 15],
+  [2,   5,  8, 12, 19],
+  [3,   6,  9, 16, 22],
+  [10, 13, 14, 17, 24],
+  [18, 21, 23, 26, 30]
+]
 
-数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。
+Given target = 5, return true.
+Given target = 20, return false.
+解题思路
+要求时间复杂度 O(M + N)，空间复杂度 O(1)。其中 M 为行数，N 为 列数。
 
-请找出数组中任意一个重复的数字。
-
-注意：如果某些数字不在 0∼n−1 的范围内，或数组中不包含重复数字，则返回 -1；
-
-*/
-
-func duplicateInArray(nums []int) int {
-	if nums == nil || len(nums) <= 0 {
-		return -1
+该二维数组中的一个数，小于它的数一定在其左边，大于它的数一定在其下边。因此，从右上角开始查找，就可以根据 target 和当前元素的大小关系来缩小查找区间，当前元素的查找区间为左下角的所有
+****/
+//判断是否在内部
+func Find(target int, matrix [][]int) bool {
+	if matrix == nil || len(matrix) == 0 {
+		return false
 	}
-	n := len(nums)
-	for i := 0; i < n; i++ {
-		//移动到i 的位置
-		for nums[i] != i {
-			if nums[nums[i]] != nums[i] {
-				nums[nums[i]], nums[i] = nums[i], nums[nums[i]]
-			} else {
-				return nums[i]
+	//从右上角开始查找
+	m := len(matrix)    //行
+	n := len(matrix[0]) //列
+
+	// 右上角
+	org := matrix[0][n-1]
+	i := 0
+	j := n - 1
+	for {
+		if target > org {
+			j--
+			if j < 0 {
+				return false
 			}
 		}
+		if target < org {
+			i++
+			if i > m-1 {
+				return false
+			}
+		}
+		if target < org {
+			return true
+		}
+		org = matrix[i][j]
 	}
-	return -1
 }
